@@ -7,7 +7,7 @@ import HeaderButton from "../HeaderButton/HeaderButton";
 import Navigation from "../Navigation/Navigation";
 import Main from "../Main/Main";
 import Footer from "../Footer/Footer";
-import SavedNewsHeader from "../SavedNewsHeader/SavedNewsHeader";
+import SavedNews from "../SavedNews/SavedNews";
 import Login from "../Login/Login";
 import Register from "../Register/Register";
 import PopupConfirm from "../PopupConfirm/PopupConfirm";
@@ -49,8 +49,8 @@ function App() {
     token &&
       validateToken(token)
         .then((res) => {
-          if (res.user) {
-            setCurrentUser(res.user);
+          if (res.name) {
+            setCurrentUser(res);
             setLoggedIn(true);
           }
         })
@@ -178,6 +178,7 @@ function App() {
         user.token && localStorage.setItem("jwt", user.token);
         setLoggedIn(true);
         closeAllPopups();
+        setCurrentUser(user);
       })
       .catch((err) => {
         console.log(err);
@@ -214,8 +215,8 @@ function App() {
   }, [isSignInPopupOpen, isSignUpPopupOpen]);
 
   return (
-    <CurrentUserContext.Provider value={currentUser}>
-      <div className={`app ${pageTheme && "app_background"}`}>
+    <div className={`app ${pageTheme && "app_background"}`}>
+      <CurrentUserContext.Provider value={currentUser}>
         <Header
           theme={pageTheme}
           openPopup={handleMenuClick}
@@ -259,11 +260,7 @@ function App() {
             path="/saved-news"
             element={
               <ProtectedRoute loggedIn={loggedIn}>
-                <SavedNewsHeader
-                  loggedIn={loggedIn}
-                  articles={articles}
-                  onDelete={removeArticle}
-                />
+                <SavedNews loggedIn={loggedIn} onDelete={removeArticle} />
               </ProtectedRoute>
             }
           />
@@ -290,8 +287,8 @@ function App() {
           name="confirm"
         />
         <Footer />
-      </div>
-    </CurrentUserContext.Provider>
+      </CurrentUserContext.Provider>
+    </div>
   );
 }
 
